@@ -1,8 +1,9 @@
 package br.com.alura.forum.controller;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.alura.forum.controller.dto.TopicoDto;
 import br.com.alura.forum.controller.form.TopicoForm;
-import br.com.alura.forum.model.Curso;
 import br.com.alura.forum.model.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
@@ -48,7 +48,7 @@ public class TopicosController {
 	
 	@PostMapping
 	//ResponseEntity. Esse generic é o tipo de objeto que vou devolver no corpo da resposta, 
-	public ResponseEntity<TopicoDto> cadastrar(@RequestBody TopicoForm form, UriComponentsBuilder uriBuilder){ //pega a requisição do corpo
+	public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder){ //pega a requisição do corpo
 		Topico topico = form.converter(cursoRepository);
 		topicoRepository.save(topico);
 		
