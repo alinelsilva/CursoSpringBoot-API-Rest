@@ -30,11 +30,15 @@ public class Topico {
 	@OneToMany(mappedBy = "topico")
 	private List<Resposta> respostas = new ArrayList<>();
 
-//	public Topico(String titulo, String mensagem, Curso curso) {
-//		this.titulo = titulo;
-//		this.mensagem = mensagem;
-//		this.curso = curso;
-//	}
+	public Topico(String titulo, String mensagem, Curso curso) {
+		this.titulo = titulo;
+		this.mensagem = mensagem;
+		this.curso = curso;
+	}
+	
+	public Topico() {
+	}
+	
 
 	@Override
 	public int hashCode() {
@@ -43,6 +47,7 @@ public class Topico {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
