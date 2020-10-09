@@ -3,19 +3,24 @@ package br.com.alura.forum.controller;
 import java.net.URI;
 import java.util.List;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import br.com.alura.forum.controller.dto.DetalhesDoTopicoDto;
 import br.com.alura.forum.controller.dto.TopicoDto;
+import br.com.alura.forum.controller.form.AtualizacaoTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.model.Topico;
 import br.com.alura.forum.repository.CursoRepository;
@@ -62,10 +67,25 @@ public class TopicosController {
 	 * detalhar um tópico especifico
 	 */
 	@GetMapping("/{id}")
-	public TopicoDto detalhar(@PathVariable Long id) {
+	public DetalhesDoTopicoDto detalhar(@PathVariable Long id) {
 		Topico topico = topicoRepository.getOne(id);
-		
-		return new TopicoDto(topico);
+		return new DetalhesDoTopicoDto(topico);
 			
+	}
+	
+	@PutMapping("/{id}") //sobreescrever o recurso (algo que já está escrito)
+	@Transactional //informar que é para commitar a nova alteração no banco.
+	public ResponseEntity<TopicoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form){
+		Topico topico = form.atualizar(id, topicoRepository);
+		
+		return ResponseEntity.ok(new TopicoDto(topico));
+	}
+	
+	@DeleteMapping("{id}") //deletar um topico especifico
+	public ResponseEntity<?> remover(@PathVariable Long id){ //<?> generico sem especificar um
+		topicoRepository.deleteById(id);
+		
+		return ResponseEntity.ok().build(); //apenas irá retornar o retorno ok após o topico ser deletado
+		
 	}
 }
