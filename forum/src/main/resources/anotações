@@ -1,0 +1,17 @@
+Anotações
+
+Caso for mostrar apenas uma lista com poucos itens sem paginação 
+
+	public List<TopicoDto> lista(String nomeCurso) {
+//		System.out.println(nomeCurso);
+		if(nomeCurso == null) { //caso o nome for null irá trazer todos
+			List<Topico> topicos = topicoRepository.findAll();
+			return TopicoDto.converter(topicos);
+			
+		} else { //caso especificar um nome, irá trazer a lista que tem aquele nome
+			List<Topico> topicos = topicoRepository.findByCursoNome(nomeCurso);
+			return TopicoDto.converter(topicos);
+		}
+		//retorna uma lista em json.
+		// return Arrays.asList(topico, topico);
+	}
