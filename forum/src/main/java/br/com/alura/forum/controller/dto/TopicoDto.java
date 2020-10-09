@@ -9,6 +9,7 @@ import br.com.alura.forum.model.Topico;
 /*
  * Que não é uma boa prática retornar entidades JPA nos métodos dos controllers, 
  * sendo mais indicado retornar classes que seguem o padrão DTO (Data Transfer Object);
+ * Selecionando quais campos serão retornado para o usuário
  */
 
 public class TopicoDto {
