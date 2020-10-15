@@ -8,9 +8,11 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,12 +44,15 @@ public class TopicosController {
 	private CursoRepository cursoRepository;
 	
 	@GetMapping
+	//anotação para guardar o cache
+	@Cacheable(value = "listaDeTopicos")
 //	@ResponseBody //navega pelo browser sem precisar criar uma página.html
-	public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso,
-			@RequestParam int pagina, @RequestParam int qtd) { //lista com paginação
-		
-		//criar a paginação
-		Pageable paginacao = PageRequest.of(pagina, qtd);
+	public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso, Pageable paginacao) { //cria a lista com paginação
+		/*
+		 * definir atributos de paginação, default caso não vir nenhum tipo de parametro
+		 * para a paginação
+		 * @PageableDefault(sort ="id", direction= Direction.DESC, page=0, size=10)
+		 */
 		
 		if(nomeCurso == null) { //caso o nome for null irá trazer todos
 			Page<Topico> topicos = topicoRepository.findAll(paginacao); //irá trazer todo conteúdo e informando quantas páginas tem
