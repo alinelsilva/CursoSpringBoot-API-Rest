@@ -28,7 +28,7 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter{
 		.antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
 		.anyRequest().authenticated(); //qualquer outra requisição precisar autenticar para acessar.
 	}
-	
+	////
 	//configuração de recursos estáticos(requisição para arquivo de js,css, imagem etc)
 	@Override
 	public void configure(WebSecurity web) throws Exception {
