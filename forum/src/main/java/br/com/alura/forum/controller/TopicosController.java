@@ -8,11 +8,13 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +49,7 @@ public class TopicosController {
 	//anotação para guardar o cache
 	@Cacheable(value = "listaDeTopicos")
 //	@ResponseBody //navega pelo browser sem precisar criar uma página.html
-	public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso, Pageable paginacao) { //cria a lista com paginação
+	public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso,  @PageableDefault(sort ="id", page=0, size=10) Pageable paginacao) { //cria a lista com paginação
 		/*
 		 * definir atributos de paginação, default caso não vir nenhum tipo de parametro
 		 * para a paginação
@@ -65,6 +67,12 @@ public class TopicosController {
 	}
 	
 	@PostMapping
+	@Transactional
+	@CacheEvict(value = "listaDeTopicos", allEntries = true) 
+	/*
+	 * 	@CacheEvictinforma que é para limpar um determinado cache e atualizar as informações se 
+	 * necessário do cache, mas usado quando a tabela não é usada tanto ou atualizada com frequencia.
+	 */
 	//ResponseEntity. Esse generic é o tipo de objeto que vou devolver no corpo da resposta, 
 	public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder){ //pega a requisição do corpo
 		Topico topico = form.converter(cursoRepository);
@@ -90,6 +98,7 @@ public class TopicosController {
 	
 	@PutMapping("/{id}") //sobreescrever o recurso (algo que já está escrito)
 	@Transactional //informar que é para commitar a nova alteração no banco.
+	@CacheEvict(value = "listaDeTopicos", allEntries = true)
 	public ResponseEntity<TopicoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form){
 		Optional<Topico> optional = topicoRepository.findById(id);
 		if(optional.isPresent()) { //verifica se o id está presente no banco de dados
@@ -100,6 +109,8 @@ public class TopicosController {
 	}
 	
 	@DeleteMapping("{id}") //deletar um topico especifico
+	@Transactional
+	@CacheEvict(value = "listaDeTopicos", allEntries = true)
 	public ResponseEntity<?> remover(@PathVariable Long id){ //<?> generico sem especificar um
 		Optional<Topico> optional = topicoRepository.findById(id);
 		if(optional.isPresent()) { 
