@@ -1,5 +1,6 @@
 package br.com.alura.forum.config.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -7,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /*
  * Habilitação de segurança
@@ -15,9 +17,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SecurityConfiguration  extends WebSecurityConfigurerAdapter{
 	
+	@Autowired
+	private AutenticacaoService autenticacaoService;
+	
 	//configurar a parte de autenticação, controle de acesso
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+	//	auth.userDetailsService() //qual classe que a autenticação
+		auth.userDetailsService(autenticacaoService).passwordEncoder(new BCryptPasswordEncoder());
+		//BCryptPasswordEncoder vai gerar um hash da senha
 	}
 	
 	//configuração de autorização, quem pode acessar o que e qual url
@@ -26,13 +34,17 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter{
 		http.authorizeRequests()
 		.antMatchers(HttpMethod.GET, "/topicos").permitAll()
 		.antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
-		.anyRequest().authenticated(); //qualquer outra requisição precisar autenticar para acessar.
+		.anyRequest().authenticated() //qualquer outra requisição precisar autenticar para acessar.
+		.and().formLogin(); //gera um formulário para fazer login
 	}
-	////
+	
 	//configuração de recursos estáticos(requisição para arquivo de js,css, imagem etc)
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 	}
 	
+//	public static void main(String[] args) {
+//		System.out.println(new BCryptPasswordEncoder().encode("123456"));
+//	}
 
 }
