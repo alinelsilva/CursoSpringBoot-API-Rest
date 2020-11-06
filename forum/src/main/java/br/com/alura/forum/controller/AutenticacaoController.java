@@ -22,7 +22,7 @@ import br.com.alura.forum.controller.form.LoginForm;
 public class AutenticacaoController {
 	//será solicitado pelo usuário quando for  logar
 	@Autowired
-	private AuthenticationManager authManager;
+	private AuthenticationManager authManager; //dispara o processo de autenticação do usuario e senha
 	
 	@Autowired
 	private TokenService tokenService;

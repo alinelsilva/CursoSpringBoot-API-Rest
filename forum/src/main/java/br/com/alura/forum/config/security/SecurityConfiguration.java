@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import br.com.alura.forum.repository.UsuarioRepository;
 
 /*
  * Habilitação de segurança
@@ -22,6 +25,12 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	private AutenticacaoService autenticacaoService;
+	
+	@Autowired
+	private TokenService tokenService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 	
 	@Override
 	@Bean
@@ -47,7 +56,8 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter{
 		.anyRequest().authenticated() //qualquer outra requisição precisar autenticar para acessar.
 //		.and().formLogin(); //gera um formulário para fazer login padrão do spring
 		.and().csrf().disable()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //não irá criar sessão
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //não irá criar sessão
+		.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository), UsernamePasswordAuthenticationFilter.class);
 	}
 	
 	//configuração de recursos estáticos(requisição para arquivo de js,css, imagem etc)
