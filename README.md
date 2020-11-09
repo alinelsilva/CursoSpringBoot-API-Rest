@@ -19,3 +19,5 @@ Curso Alura
 
 *caso for cadastrar um novo item na aba body preencher com as informações necessárias e depois na aba headers informar a key o value. Em seguida clicar em send para realizar o cadastro. 
 
+Site https://swagger.io/
+para documentar uma api
